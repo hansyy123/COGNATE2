@@ -45,24 +45,20 @@ public class RoutesActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     
     private LinearLayout btnTricycle, btnJeepney;
+    private LinearLayout layoutPassengerSelection;
+    private Button btnPass1, btnPass3;
     private String selectedVehicle = "Tricycle"; // Default
+    private int numPassengers = 1; // Default to 1-2 passengers
     private String username;
 
     private String[] barangayList = {
-            "Town", "Arena Blanco", "Ayala", "Baliwasan", "Baluno", "Boalan", "Bolong", "Buenavista", "Bunguiao",
-             "Cabaluay", "Cabatangan", "Calarian", "Camino Nuevo",
-            "Campo Islam", "Canelar", "Cawit", "Culianan", "Curuan","Divisoria",
-            "Guisao", "Guiwan", "Kasanyangan", "La Paz",
-            "Labuan", "Lamisahan", "Landang Gua", "Landang Laum", "Lanzones", "Lapakan", "Latuan (Curuan)",
-            "Licomo", "Limaong", "Limpapa", "Lubigan", "Lumayang", "Lumbangan", "Lunzuran", "Maasin",
-            "Malagutay", "Mampang", "Manalipa", "Mangusu", "Manicahan", "Mariki", "Mercedes", "Muti",
-            "Pamucutan", "Pangapuyan", "Panubigan", "Pasilmanta (Sacol Island)", "Pasobolong", "Pasonanca",
-            "Patalon", "Putik","Recodo", "Rio Hondo", "Salaan", "San Jose Cawa-Cawa",
-            "San Jose Gusu", "San Ramon", "San Roque", "Sangali", "Santa Barbara", "Santa Catalina",
-            "Santa Maria", "Santo Niño", "Sibulao (Caruan)", "Sinubung", "Sinunoc", "Tagasilay", "Taguiti",
-            "Talabaan", "Talisayan", "Talon-Talon", "Taluksangay", "Tetuan", "Tictapul", "Tigbalabag",
-            "Tigtabon","Tugbungan", "Tulungatung", "Tumaga", "Victoria",
-            "Vitali", "Zambowood"
+            "Town","Arena Blanco","Ayala","Baliwasan","Boalan","Bolong","Bunguiao",
+            "Cabaluay","Cabatangan","Calarian","Camino Nuevo","Campo Islam","Canelar","Culianan",
+            "Curuan","Guiwan","La Paz","Labuan","Limpapa","Lumbangan","Lunzuran",
+            "Maasin","Mampang","Mercedes","Pasobolong","Patalon","San Jose Cawa-Cawa","San Jose Gusu",
+            "San Ramon","San Roque","Sangali","Santa Barbara","Santa Catalina","Santa Maria","Santo Niño",
+            "Sinubung","Sinunoc","Talisayan","Talon-Talon","Tetuan","Tugbungan","Vitali",
+            "Zambowood","Manicahan","Pasonanca","Putik"
     };
 
     private Map<String, LatLng> coordinatesMap = new HashMap<>();
@@ -84,6 +80,9 @@ public class RoutesActivity extends AppCompatActivity {
         etDestination = findViewById(R.id.etDestination);
         btnTricycle = findViewById(R.id.btnTricycle);
         btnJeepney = findViewById(R.id.btnJeepney);
+        layoutPassengerSelection = findViewById(R.id.layoutPassengerSelection);
+        btnPass1 = findViewById(R.id.btnPass1);
+        btnPass3 = findViewById(R.id.btnPass3);
         btnCalculate = findViewById(R.id.btnCalculate);
         cardResult = findViewById(R.id.cardResult);
         tvResultDistance = findViewById(R.id.tvResultDistance);
@@ -117,6 +116,10 @@ public class RoutesActivity extends AppCompatActivity {
         btnTricycle.setOnClickListener(v -> selectVehicle("Tricycle"));
         btnJeepney.setOnClickListener(v -> selectVehicle("Jeepney"));
 
+        // Setup Passenger Selection
+        btnPass1.setOnClickListener(v -> selectPassengers(1));
+        btnPass3.setOnClickListener(v -> selectPassengers(3));
+
         // Set destination if passed from Map
         if (destinationFromMap != null) {
             etDestination.setText(destinationFromMap);
@@ -145,6 +148,10 @@ public class RoutesActivity extends AppCompatActivity {
             }
             return id == R.id.nav_routes;
         });
+
+        // Initialize default selection
+        selectVehicle("Tricycle");
+        selectPassengers(1);
     }
 
     @Override
@@ -227,6 +234,8 @@ public class RoutesActivity extends AppCompatActivity {
             btnJeepney.setBackgroundTintList(android.content.res.ColorStateList.valueOf(dark));
             ((TextView) btnJeepney.getChildAt(1)).setTextColor(grey);
             ((android.widget.ImageView) btnJeepney.getChildAt(0)).setColorFilter(grey);
+
+            layoutPassengerSelection.setVisibility(View.VISIBLE);
         } else {
             btnJeepney.setBackgroundTintList(android.content.res.ColorStateList.valueOf(orange));
             ((TextView) btnJeepney.getChildAt(1)).setTextColor(white);
@@ -235,6 +244,28 @@ public class RoutesActivity extends AppCompatActivity {
             btnTricycle.setBackgroundTintList(android.content.res.ColorStateList.valueOf(dark));
             ((TextView) btnTricycle.getChildAt(1)).setTextColor(grey);
             ((android.widget.ImageView) btnTricycle.getChildAt(0)).setColorFilter(grey);
+
+            layoutPassengerSelection.setVisibility(View.GONE);
+        }
+    }
+
+    private void selectPassengers(int count) {
+        numPassengers = count;
+        int orange = ContextCompat.getColor(this, R.color.ui_orange);
+        int bg = ContextCompat.getColor(this, R.color.ui_input_bg);
+        int white = Color.WHITE;
+        int grey = ContextCompat.getColor(this, R.color.ui_text_secondary);
+
+        if (count == 1) {
+            btnPass1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(orange));
+            btnPass1.setTextColor(white);
+            btnPass3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(bg));
+            btnPass3.setTextColor(grey);
+        } else {
+            btnPass3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(orange));
+            btnPass3.setTextColor(white);
+            btnPass1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(bg));
+            btnPass1.setTextColor(grey);
         }
     }
 
@@ -339,9 +370,22 @@ public class RoutesActivity extends AppCompatActivity {
         double fare = 0;
 
         if (selectedVehicle.equals("Tricycle")) {
-            fare = roadDistanceKm * 15;
-            tvResultDistance.setText(String.format("Estimated Distance: %.2f km (%d m)", roadDistanceKm, (int)(roadDistanceKm * 1000)));
+            // New logic: ₱35 for 1–2 passengers for the first 1 km. +₱10 for the 3rd passenger. 
+            // +₱10 for each additional kilometer (no matter how many passengers).
+            double baseFare = 35.0;
+            if (numPassengers == 3) {
+                baseFare += 10.0;
+            }
+
+            if (roadDistanceKm <= 1.0) {
+                fare = baseFare;
+            } else {
+                fare = baseFare + (Math.ceil(roadDistanceKm - 1.0) * 10.0);
+            }
+            
+            tvResultDistance.setText(String.format("Estimated Distance: %.2f km", roadDistanceKm));
         } else {
+            // Jeepney logic remains the same
             fare = 14.0;
             if (roadDistanceKm > 4) {
                 fare += (roadDistanceKm - 4) * 2.40;

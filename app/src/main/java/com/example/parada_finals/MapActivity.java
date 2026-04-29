@@ -448,6 +448,7 @@ public class MapActivity extends AppCompatActivity {
 
         EditText etSearch = dialogView.findViewById(R.id.etSearchLocation);
         RecyclerView rvLocations = dialogView.findViewById(R.id.rvLocations);
+        View btnClose = dialogView.findViewById(R.id.btnClosePicker);
         rvLocations.setLayoutManager(new LinearLayoutManager(this));
 
         List<String> locationNames = new ArrayList<>(locationPoints.keySet());
@@ -469,6 +470,10 @@ public class MapActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
         }
 
         etSearch.addTextChangedListener(new TextWatcher() {

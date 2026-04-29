@@ -258,6 +258,55 @@
 
             </LinearLayout>
 
+            <!-- PASSENGER SELECTION -->
+            <LinearLayout
+                android:id="@+id/layoutPassengerSelection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="24dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Number of Passengers"
+                    android:textColor="@color/ui_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPass1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:text="1-2 "
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/ui_orange"
+                        app:cornerRadius="12dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPass3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="3"
+                        android:textAllCaps="false"
+                        android:textColor="@color/ui_text_secondary"
+                        android:backgroundTint="@color/ui_input_bg"
+                        app:cornerRadius="12dp" />
+                </LinearLayout>
+            </LinearLayout>
+
             <!-- RESULT CARD -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardResult"

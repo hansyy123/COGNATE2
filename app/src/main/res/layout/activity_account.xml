@@ -17,32 +17,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.google.android.material.card.MaterialCardView
+            <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:cardBackgroundColor="@color/ui_card_surface"
-                app:cardCornerRadius="12dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/ui_divider"
-                android:clickable="true"
-                android:focusable="true">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="10dp"
-                    android:src="@android:drawable/ic_menu_revert"
-                    app:tint="@color/ui_orange"
-                    android:rotation="180"/>
-            </com.google.android.material.card.MaterialCardView>
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="-12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_back"
+                app:tint="@color/ui_orange"
+                android:contentDescription="Back" />
 
             <TextView
                 android:id="@+id/tvAppName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/btnBack"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="4dp"
                 android:layout_centerVertical="true"
                 android:text="PARADA"
                 android:textColor="@color/ui_orange"

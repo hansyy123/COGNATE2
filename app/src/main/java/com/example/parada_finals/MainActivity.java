@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnLogin;
+    private Button btnLogin, btnGuest;
     private TextView tvSignUp;
     private EditText etUsername, etPassword;
 
@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize elements
         btnLogin = findViewById(R.id.btnLogin);
+        btnGuest = findViewById(R.id.btnGuest);
         tvSignUp = findViewById(R.id.tvSignUp);
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
@@ -32,21 +33,32 @@ public class MainActivity extends AppCompatActivity {
             if (username.isEmpty()) {
                 Toast.makeText(MainActivity.this, "Please enter a username", Toast.LENGTH_SHORT).show();
             } else {
-                // Save username to SharedPreferences for global access
-                SharedPreferences prefs = getSharedPreferences("UserData", MODE_PRIVATE);
-                prefs.edit().putString("username", username).apply();
-
-                Intent intent = new Intent(MainActivity.this, RoutesActivity.class);
-                intent.putExtra("USERNAME", username);
-                startActivity(intent);
-                finish(); // Finish MainActivity so user can't go back to login without logging out
+                loginAsUser(username);
             }
         });
 
-        // 2. Direct to Register Page on "Create one" click
+        // 2. Continue as Guest click
+        if (btnGuest != null) {
+            btnGuest.setOnClickListener(v -> {
+                loginAsUser("Guest");
+            });
+        }
+
+        // 3. Direct to Register Page on "Sign up" click
         tvSignUp.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
+    }
+
+    private void loginAsUser(String username) {
+        // Save username to SharedPreferences for global access
+        SharedPreferences prefs = getSharedPreferences("UserData", MODE_PRIVATE);
+        prefs.edit().putString("username", username).apply();
+
+        Intent intent = new Intent(MainActivity.this, RoutesActivity.class);
+        intent.putExtra("USERNAME", username);
+        startActivity(intent);
+        finish(); // Finish MainActivity so user can't go back to login without logging out
     }
 }
