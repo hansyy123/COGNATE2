@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light Mode Values (White Theme) - Max Contrast Black Text -->
+    <color name="ui_main_bg">#FFFFFF</color>
+    <color name="ui_card_surface">#F2F2F7</color>
+    <color name="ui_input_surface">#F2F2F7</color>
+    <color name="ui_text_primary">#000000</color>
+    <color name="ui_text_secondary">#000000</color>
+    <color name="ui_divider">#D1D1D6</color>
+
+    <!-- Primary Brand Colors (Constant) -->
+    <color name="ui_orange">#EF533B</color>
+    <color name="parada_red">#D32F2F</color>
+    <color name="parada_red_light">#FFCDD2</color>
+    <color name="error">#B00020</color>
+
+    <!-- State Colors for Navigation - Black when unselected -->
+    <color name="selected_grey">@color/ui_orange</color>
+    <color name="unselected_grey">#000000</color>
+
+    <!-- Neutrals (Fixed Palette) -->
+    <color name="black">#212121</color>
+    <color name="white">#FFFFFF</color>
+    <color name="grey_50">#F8F9FA</color>
+    <color name="grey_100">#F1F3F4</color>
+    <color name="grey_200">#E8EAED</color>
+    <color name="grey_300">#DADCE0</color>
+    <color name="grey_400">#BDC1C6</color>
+    <color name="grey_500">#9AA0A6</color>
+    <color name="grey_600">#70757A</color>
+    <color name="grey_700">#5F6368</color>
+    <color name="grey_800">#3C4043</color>
+    <color name="grey_900">#202124</color>
+
+    <!-- Legacy Mappings for compatibility -->
+    <color name="ui_dark_bg">@color/ui_main_bg</color>
+    <color name="ui_card_bg">@color/ui_card_surface</color>
+    <color name="ui_input_bg">@color/ui_input_surface</color>
+    <color name="card_red_side">#FF5252</color>
+    <color name="card_purple_side">#7C4DFF</color>
+    <color name="card_green_side">#69F0AE</color>
+    <color name="bg_light_red">#FFF0F3</color>
+    <color name="bg_light_purple">#F3E5F5</color>
+    <color name="bg_light_green">#E8F5E9</color>
+    <color name="bg_light_orange">#FFF3E0</color>
+</resources>

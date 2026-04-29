@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- TITLE -->
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Route Details"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#222"
+        android:layout_marginBottom="14dp"/>
+
+    <!-- ROUTE -->
+    <EditText
+        android:id="@+id/etRoute"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Route (e.g. KCC → SM Mindpro)"
+        android:padding="10dp"
+        android:background="@android:drawable/editbox_background"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- VEHICLE -->
+    <EditText
+        android:id="@+id/etVehicle"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Vehicle (Jeepney, Bus, Tricycle)"
+        android:padding="10dp"
+        android:background="@android:drawable/editbox_background"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- FARE -->
+    <EditText
+        android:id="@+id/etFare"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Fare (₱10 - ₱20)"
+        android:padding="10dp"
+        android:background="@android:drawable/editbox_background"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- TIME -->
+    <EditText
+        android:id="@+id/etTime"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Time (6:00 AM - 9:00 PM)"
+        android:padding="10dp"
+        android:background="@android:drawable/editbox_background"
+        android:layout_marginBottom="16dp"/>
+
+</LinearLayout>

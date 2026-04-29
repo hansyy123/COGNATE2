@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Mode Values (Original Design) -->
+    <color name="ui_main_bg">#000000</color>
+    <color name="ui_card_surface">#1C1C1E</color>
+    <color name="ui_input_surface">#2C2C2E</color>
+    <color name="ui_text_primary">#FFFFFF</color>
+    <color name="ui_text_secondary">#9AA0A6</color>
+    <color name="ui_divider">#3C4043</color>
+
+    <!-- State Colors for Navigation (Dark) -->
+    <color name="selected_grey">@color/ui_orange</color>
+    <color name="unselected_grey">#9AA0A6</color>
+</resources>
