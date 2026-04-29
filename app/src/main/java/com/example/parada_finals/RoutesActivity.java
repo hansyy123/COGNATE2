@@ -49,20 +49,18 @@ public class RoutesActivity extends AppCompatActivity {
     private String username;
 
     private String[] barangayList = {
-            "Town", "Arena Blanco", "Ayala", "Baliwasan", "Baluno", "Boalan", "Bolong", "Buenavista", "Bunguiao",
-             "Cabaluay", "Cabatangan", "Calarian", "Camino Nuevo",
-            "Campo Islam", "Canelar", "Cawit", "Culianan", "Curuan","Divisoria",
-            "Guisao", "Guiwan", "Kasanyangan", "La Paz",
-            "Labuan", "Lamisahan", "Landang Gua", "Landang Laum", "Lanzones", "Lapakan", "Latuan (Curuan)",
-            "Licomo", "Limaong", "Limpapa", "Lubigan", "Lumayang", "Lumbangan", "Lunzuran", "Maasin",
-            "Malagutay", "Mampang", "Manalipa", "Mangusu", "Manicahan", "Mariki", "Mercedes", "Muti",
-            "Pamucutan", "Pangapuyan", "Panubigan", "Pasilmanta (Sacol Island)", "Pasobolong", "Pasonanca",
-            "Patalon", "Putik","Recodo", "Rio Hondo", "Salaan", "San Jose Cawa-Cawa",
-            "San Jose Gusu", "San Ramon", "San Roque", "Sangali", "Santa Barbara", "Santa Catalina",
-            "Santa Maria", "Santo Niño", "Sibulao (Caruan)", "Sinubung", "Sinunoc", "Tagasilay", "Taguiti",
-            "Talabaan", "Talisayan", "Talon-Talon", "Taluksangay", "Tetuan", "Tictapul", "Tigbalabag",
-            "Tigtabon","Tugbungan", "Tulungatung", "Tumaga", "Victoria",
-            "Vitali", "Zambowood"
+            "Arena Blanco", "Ayala", "Baliwasan", "Boalan", "Bolong", "Bunguiao",
+            "Cabaluay", "Cabatangan", "Calarian", "Camino Nuevo",
+            "Campo Islam", "Canelar", "Culianan", "Curuan",
+            "Guiwan", "La Paz", "Labuan", "Limpapa",
+            "Lumbangan", "Lunzuran", "Maasin",
+            "Mampang", "Mercedes", "Pasobolong",
+            "Patalon", "San Jose Cawa-Cawa", "San Jose Gusu",
+            "San Roque", "Sangali", "Santa Barbara", "Santa Catalina",
+            "Santa Maria", "Santo Niño", "Sinubong", "Sinunoc",
+            "Talisayan", "Talon-Talon", "Tetuan", "Tugbungan",
+            "Vitali", "Zambowood", "San Ramon", "Manicahan",
+            "Pasonanca", "Putik", "Tumaga"
     };
 
     private Map<String, LatLng> coordinatesMap = new HashMap<>();
@@ -73,13 +71,8 @@ public class RoutesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_routes);
 
         initializeCoordinates();
-        
-        // Refresh username from SharedPreferences
         updateUsername();
 
-        String destinationFromMap = getIntent().getStringExtra("DESTINATION");
-
-        // Initialize UI
         etOrigin = findViewById(R.id.etOrigin);
         etDestination = findViewById(R.id.etDestination);
         btnTricycle = findViewById(R.id.btnTricycle);
@@ -89,7 +82,6 @@ public class RoutesActivity extends AppCompatActivity {
         tvResultDistance = findViewById(R.id.tvResultDistance);
         tvResultFare = findViewById(R.id.tvResultFare);
 
-        // Setup Dropdown on header click
         View cardProfileHeader = findViewById(R.id.cardProfileHeader);
         if (cardProfileHeader != null) {
             cardProfileHeader.setOnClickListener(v -> {
@@ -109,27 +101,22 @@ public class RoutesActivity extends AppCompatActivity {
             });
         }
 
-        // Setup Location Pickers
         etOrigin.setOnClickListener(v -> showLocationPickerDialog(etOrigin));
         etDestination.setOnClickListener(v -> showLocationPickerDialog(etDestination));
-
-        // Setup Selection Logic
         btnTricycle.setOnClickListener(v -> selectVehicle("Tricycle"));
         btnJeepney.setOnClickListener(v -> selectVehicle("Jeepney"));
 
-        // Set destination if passed from Map
+        String destinationFromMap = getIntent().getStringExtra("DESTINATION");
         if (destinationFromMap != null) {
             etDestination.setText(destinationFromMap);
         }
 
         btnCalculate.setOnClickListener(v -> calculateFare());
 
-        // Navigation
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.nav_routes);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-
              if (id == R.id.nav_settings) {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 intent.putExtra("USERNAME", username);
@@ -174,12 +161,12 @@ public class RoutesActivity extends AppCompatActivity {
         Collections.sort(names);
 
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_location_picker, null);
-        AlertDialog dialog = new AlertDialog.Builder(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        AlertDialog dialog = new AlertDialog.Builder(this, android.R.style.Theme_NoTitleBar_Fullscreen)
                 .setView(dialogView)
                 .create();
 
         if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.ui_main_bg)));
         }
 
         RecyclerView rvLocations = dialogView.findViewById(R.id.rvLocations);
@@ -242,15 +229,12 @@ public class RoutesActivity extends AppCompatActivity {
         coordinatesMap.put("KCC Mall", new LatLng(6.9174, 122.0754));
         coordinatesMap.put("SM Mindpro", new LatLng(6.9067, 122.0772));
         coordinatesMap.put("Town", new LatLng(6.905, 122.075));
-
         coordinatesMap.put("Arena Blanco", new LatLng(6.919773034344579, 122.15343937022541));
         coordinatesMap.put("Ayala", new LatLng(6.96373558093434, 121.94816715064628));
-
         coordinatesMap.put("Baliwasan", new LatLng(6.915959560863099, 122.05998500908423));
         coordinatesMap.put("Boalan", new LatLng(6.952658391380117, 122.11848732442542));
         coordinatesMap.put("Bolong", new LatLng(7.097771919216988, 122.24040953976699));
         coordinatesMap.put("Bunguiao", new LatLng(7.107556004415077, 122.20027894767257));
-
         coordinatesMap.put("Cabaluay", new LatLng(6.99535001119771, 122.17729443791978));
         coordinatesMap.put("Cabatangan", new LatLng(6.943481595456743, 122.05737190908422));
         coordinatesMap.put("Calarian", new LatLng(6.9243845553103265, 122.02980908209567));
@@ -260,22 +244,17 @@ public class RoutesActivity extends AppCompatActivity {
         coordinatesMap.put("Capisan", new LatLng(6.974283883154848, 122.03457646675494));
         coordinatesMap.put("Culianan", new LatLng(6.973446925097431, 122.14670820297727));
         coordinatesMap.put("Curuan", new LatLng(7.210296116702678, 122.23172212812018));
-
         coordinatesMap.put("Guiwan", new LatLng(6.928898798817435, 122.09211653976607));
-
         coordinatesMap.put("La Paz", new LatLng(6.9874008303006025, 121.95809296860172));
         coordinatesMap.put("Labuan", new LatLng(7.0982952055643045, 121.90299965326125));
         coordinatesMap.put("Limpapa", new LatLng(7.14305704852182, 121.90252791093206));
         coordinatesMap.put("Lumbangan", new LatLng(6.970478733340677, 122.10312333976624));
         coordinatesMap.put("Lunzuran", new LatLng(6.952279342122488, 122.09064333791947));
-
         coordinatesMap.put("Maasin", new LatLng(6.965875223422909, 121.98564167261706));
         coordinatesMap.put("Mampang", new LatLng(6.915846113260775, 122.13447833976619));
         coordinatesMap.put("Mercedes", new LatLng(6.9582373404550335, 122.14805194559018));
-
         coordinatesMap.put("Pasobolong", new LatLng(6.9776803900728295, 122.12828080221642));
         coordinatesMap.put("Patalon", new LatLng(7.052948750702311, 121.90958083792019));
-
         coordinatesMap.put("San Jose Cawa-Cawa", new LatLng(6.911551461401163, 122.06519119374309));
         coordinatesMap.put("San Jose Gusu", new LatLng(6.908299192422751, 122.07635139575659));
         coordinatesMap.put("San Ramon", new LatLng(7.0000, 121.9210));
@@ -285,18 +264,14 @@ public class RoutesActivity extends AppCompatActivity {
         coordinatesMap.put("Santa Catalina", new LatLng(6.909225909721007, 122.08696331093078));
         coordinatesMap.put("Santa Maria", new LatLng(6.93179326275812, 122.07474627159064));
         coordinatesMap.put("Santo Niño", new LatLng(7.033107105218401, 122.03946021633));
-
         coordinatesMap.put("Sinubung", new LatLng(7.023001649854029, 121.91933236675514));
         coordinatesMap.put("Sinunoc", new LatLng(6.934310848424623, 122.00106731093099));
-
         coordinatesMap.put("Talisayan", new LatLng(6.987823377594933, 121.92978945326065));
         coordinatesMap.put("Talon-Talon", new LatLng(6.90975476225303, 122.1123403839424));
         coordinatesMap.put("Tetuan", new LatLng(6.917908009117975, 122.09089715326036));
         coordinatesMap.put("Tugbungan", new LatLng(6.919832110919491, 122.10460962442515));
-
         coordinatesMap.put("Vitali", new LatLng(7.376906813442156, 122.29004090908656));
         coordinatesMap.put("Zambowood", new LatLng(6.9414561961921795, 122.1325018802491));
-
         coordinatesMap.put("Manicahan", new LatLng(7.023358516474465, 122.18827529444269));
         coordinatesMap.put("Pasonanca", new LatLng(6.953136288350877, 122.07172806121453));
         coordinatesMap.put("Putik", new LatLng(6.941437497400123, 122.09569929559007));
@@ -330,12 +305,9 @@ public class RoutesActivity extends AppCompatActivity {
 
         LatLng start = getLatLng(from);
         LatLng end = getLatLng(to);
-
         float[] results = new float[1];
         Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results);
-        
         double roadDistanceKm = (results[0] / 1000.0) * 1.3;
-
         double fare = 0;
 
         if (selectedVehicle.equals("Tricycle")) {

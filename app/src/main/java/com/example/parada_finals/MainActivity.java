@@ -9,9 +9,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.button.MaterialButton;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button btnLogin;
+    private MaterialButton btnGuest;
     private TextView tvSignUp;
     private EditText etUsername, etPassword;
 
@@ -22,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize elements
         btnLogin = findViewById(R.id.btnLogin);
+        btnGuest = findViewById(R.id.btnGuest);
         tvSignUp = findViewById(R.id.tvSignUp);
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
@@ -47,6 +51,18 @@ public class MainActivity extends AppCompatActivity {
         tvSignUp.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
             startActivity(intent);
+        });
+
+        // 3. Continue as Guest
+        btnGuest.setOnClickListener(v -> {
+            // Clear any previous user data to treat as guest
+            SharedPreferences prefs = getSharedPreferences("UserData", MODE_PRIVATE);
+            prefs.edit().remove("username").apply();
+
+            Intent intent = new Intent(MainActivity.this, RoutesActivity.class);
+            intent.putExtra("USERNAME", "Guest");
+            startActivity(intent);
+            finish();
         });
     }
 }

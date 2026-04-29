@@ -130,13 +130,26 @@
                 android:backgroundTint="@color/ui_orange"
                 android:textColor="@color/white"
                 app:cornerRadius="16dp"
+                android:layout_marginBottom="12dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGuest"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Continue as Guest"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:textColor="@color/ui_text_secondary"
+                app:strokeColor="@color/ui_divider"
+                app:cornerRadius="16dp"
                 android:layout_marginBottom="24dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="start">
+                android:gravity="center">
 
                 <LinearLayout
                     android:layout_width="wrap_content"

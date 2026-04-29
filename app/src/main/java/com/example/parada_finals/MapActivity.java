@@ -26,6 +26,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,6 +49,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +71,23 @@ public class MapActivity extends AppCompatActivity {
     private Polyline currentRouteLine;
     private CardView cardDistanceOverlay;
     private TextView tvOverlayDistance;
+    private Marker startMarker, endMarker;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
+    private String[] barangayList = {
+            "Town", "Arena Blanco", "Ayala", "Baliwasan", "Baluno", "Boalan", "Bolong", "Buenavista", "Bunguiao",
+            "Cabaluay", "Cabatangan", "Calarian", "Camino Nuevo", "Campo Islam", "Canelar", "Cawit", "Culianan",
+            "Curuan", "Divisoria", "Guisao", "Guiwan", "Kasanyangan", "La Paz", "Labuan", "Lamisahan",
+            "Landang Gua", "Landang Laum", "Lanzones", "Lapakan", "Latuan (Curuan)", "Licomo", "Limaong",
+            "Limpapa", "Lubigan", "Lumayang", "Lumbangan", "Lunzuran", "Maasin", "Malagutay", "Mampang",
+            "Manalipa", "Mangusu", "Manicahan", "Mariki", "Mercedes", "Muti", "Pamucutan", "Pangapuyan",
+            "Panubigan", "Pasilmanta (Sacol Island)", "Pasobolong", "Pasonanca", "Patalon", "Putik",
+            "Recodo", "Rio Hondo", "Salaan", "San Jose Cawa-Cawa", "San Jose Gusu", "San Ramon",
+            "San Roque", "Sangali", "Santa Barbara", "Santa Catalina", "Santa Maria", "Santo Niño",
+            "Sibulao (Caruan)", "Sinubung", "Sinunoc", "Tagasilay", "Taguiti", "Talabaan", "Talisayan",
+            "Talon-Talon", "Taluksangay", "Tetuan", "Tictapul", "Tigbalabag", "Tigtabon", "Tugbungan",
+            "Tulungatung", "Tumaga", "Victoria", "Vitali", "Zambowood"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,12 +149,7 @@ public class MapActivity extends AppCompatActivity {
             ivCloseRoute.setOnClickListener(v -> {
                 cardRouteSelection.setVisibility(View.GONE);
                 cardSearchBar.setVisibility(View.VISIBLE);
-                if (currentRouteLine != null) {
-                    mapView.getOverlays().remove(currentRouteLine);
-                    currentRouteLine = null;
-                }
-                cardDistanceOverlay.setVisibility(View.GONE);
-                mapView.invalidate();
+                clearRoute();
             });
         }
 
@@ -172,6 +185,23 @@ public class MapActivity extends AppCompatActivity {
                 return id == R.id.nav_map;
             });
         }
+    }
+
+    private void clearRoute() {
+        if (currentRouteLine != null) {
+            mapView.getOverlays().remove(currentRouteLine);
+            currentRouteLine = null;
+        }
+        if (startMarker != null) {
+            mapView.getOverlays().remove(startMarker);
+            startMarker = null;
+        }
+        if (endMarker != null) {
+            mapView.getOverlays().remove(endMarker);
+            endMarker = null;
+        }
+        cardDistanceOverlay.setVisibility(View.GONE);
+        mapView.invalidate();
     }
 
     @Override
@@ -218,67 +248,56 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void initializeMarkers() {
-        addMarker(6.9174, 122.0754, "KCC Mall de Zamboanga", "Gov. Camins Ave", "Large shopping mall with dining and entertainment");
-        addMarker(6.9093, 122.0753, "ADZU", "La Purisima St", "Private university known for academic excellence");
-        addMarker(6.9400, 122.0488, "Pasonanca Park", "Pasonanca", "Popular park with pools and picnic areas");
-        addMarker(6.9004, 122.0825, "Fort Pilar Shrine", "NS Valderosa St", "Historic shrine and cultural landmark");
-        addMarker(6.9248, 122.0594, "Zamboanga Airport", "Moret IT", "Main airport serving the city");
-        addMarker(6.9090, 122.0750, "SM Mindpro", "La Purisima St", "Modern mall in the city center");
-        addMarker(6.9156, 122.0619, "WMSU", "Normal Rd", "State university with diverse programs");
-        addMarker(6.9126, 122.0560, "Grandstand", "San Jose", "Public venue for events and sports");
-        addMarker(6.9061, 122.0748, "Pilar College", "Justice RT Lim Blvd", "Well-known private school");
-        addMarker(6.9284, 122.0467, "Yubenco Gusu", "San Jose Gusu", "Local supermarket and shopping area");
-        addMarker(6.9183, 122.0838, "Yubenco Tetuan", "Tetuan", "Convenient shopping center in Tetuan");
-        addMarker(6.9651, 121.9829, "Yubenco Ayala", "Ayala", "Mall serving western barangays");
-        addMarker(6.9265, 122.0612, "Garden Orchid", "Gov. Camins Ave", "Hotel with events and dining services");
-
-        addMarker(6.919773034344579, 122.15343937022541, "Arena Blanco", "Brgy. Arena Blanco", "Coastal barangay with beaches and fishing areas");
-        addMarker(6.96373558093434, 121.94816715064628, "Ayala", "Brgy. Ayala", "Busy transport and commercial hub");
-        addMarker(6.915959560863099, 122.05998500908423, "Baliwasan", "Brgy. Baliwasan", "Residential area near city proper");
-        addMarker(6.952658391380117, 122.11848732442542, "Boalan", "Brgy. Boalan", "Growing residential and commercial zone");
-        addMarker(7.097771919216988, 122.24040953976699, "Bolong", "Brgy. Bolong", "Beach area known for resorts and seafood");
-        addMarker(7.107556004415077, 122.20027894767257, "Bunguiao", "Brgy. Bunguiao", "Quiet coastal community with scenic views");
-        addMarker(6.99535001119771, 122.17729443791978, "Cabaluay", "Brgy. Cabaluay", "Coastal barangay with resorts and fishing");
-        addMarker(6.943481595456743, 122.05737190908422, "Cabatangan", "Brgy. Cabatangan", "Residential area near airport zone");
-        addMarker(6.9243845553103265, 122.02980908209567, "Calarian", "Brgy. Calarian", "Home of golf course and seaside spots");
-        addMarker(6.914615272553048, 122.07337289876416, "Camino Nuevo", "Brgy. Camino Nuevo", "Central barangay with commercial activity");
-        addMarker(6.914864258228712, 122.0460553379195, "Campo Islam", "Brgy. Campo Islam", "Historic coastal community");
-        addMarker(6.9165683574969865, 122.0706138514137, "Canelar", "Brgy. Canelar", "Known for barter trade and markets");
-        addMarker(6.974283883154848, 122.03457646675494, "Capisan", "Brgy. Capisan", "Cool elevated area with greenery");
-        addMarker(6.973446925097431, 122.14670820297727, "Culianan", "Brgy. Culianan", "Agricultural hub with local markets");
-        addMarker(7.210296116702678, 122.23172212812018, "Curuan", "Brgy. Curuan", "Major transport and trading hub");
-        addMarker(6.928898798817435, 122.09211653976607, "Guiwan", "Brgy. Guiwan", "Urban barangay with mixed residential areas");
-        addMarker(6.9874008303006025, 121.95809296860172, "La Paz", "Brgy. La Paz", "Scenic rural area with farms");
-        addMarker(7.0982952055643045, 121.90299965326125, "Labuan", "Brgy. Labuan", "Coastal barangay with port access");
-        addMarker(7.14305704852182, 121.90252791093206, "Limpapa", "Brgy. Limpapa", "Boundary barangay near neighboring province");
-        addMarker(6.970478733340677, 122.10312333976624, "Lumbangan", "Brgy. Lumbangan", "Active residential and farming area");
-        addMarker(6.952279342122488, 122.09064333791947, "Lunzuran", "Brgy. Lunzuran", "Quiet community with residential homes");
-        addMarker(6.965875223422909, 121.98564167261706, "Maasin", "Brgy. Maasin", "Riverside barangay with agriculture");
-        addMarker(6.915846113260775, 122.13447833976619, "Mampang", "Brgy. Mampang", "Known for salt production and coastal life");
-        addMarker(6.9582373404550335, 122.14805194559018, "Mercedes", "Brgy. Mercedes", "Residential suburb with growing developments");
-        addMarker(6.9776803900728295, 122.12828080221642, "Pasobolong", "Brgy. Pasobolong", "Agricultural area with farms and fields");
-        addMarker(7.052948750702311, 121.90958083792019, "Patalon", "Brgy. Patalon", "Scenic area with hills and greenery");
-        addMarker(6.911551461401163, 122.06519119374309, "San Jose Cawa-Cawa", "Brgy. San Jose", "Boulevard area near the sea");
-        addMarker(6.908299192422751, 122.07635139575659, "San Jose Gusu", "Brgy. San Jose Gusu", "Busy urban center with markets");
-        addMarker(6.93078520358863, 122.04634125515484, "San Roque", "Brgy. San Roque", "Large residential barangay");
-        addMarker(7.078864084812816, 122.21381369887183, "Sangali", "Brgy. Sangali", "Port area with ferry connections");
-        addMarker(6.90358190569268, 122.08195263791943, "Santa Barbara", "Brgy. Sta. Barbara", "Historic area with cultural sites");
-        addMarker(6.909225909721007, 122.08696331093078, "Santa Catalina", "Brgy. Sta. Catalina", "Vibrant community near city center");
-        addMarker(6.93179326275812, 122.07474627159064, "Santa Maria", "Brgy. Sta. Maria", "Large residential area");
-        addMarker(7.033107105218401, 122.03946021633, "Santo Niño", "Brgy. Santo Niño", "Community with suburban feel");
-        addMarker(6.934310848424623, 122.00106731093099, "Sinunoc", "Brgy. Sinunoc", "Scenic coastal and farming area");
-        addMarker(7.023001649854029, 121.91933236675514, "Sinubong", "Brgy. Sinubong", "Pickup and transport point");
-        addMarker(6.987823377594933, 121.92978945326065, "Talisayan", "Brgy. Talisayan", "Beach area with resorts");
-        addMarker(6.90975476225303, 122.1123403839424, "Talon-Talon", "Brgy. Talon-Talon", "Busy residential and commercial area");
-        addMarker(6.917908009117975, 122.09089715326036, "Tetuan", "Brgy. Tetuan", "Major barangay with schools and markets");
-        addMarker(6.919832110919491, 122.10460962442515, "Tugbungan", "Brgy. Tugbungan", "Residential area with local businesses");
-        addMarker(7.376906813442156, 122.29004090908656, "Vitali", "Brgy. Vitali", "Northernmost barangay with rural setting");
-        addMarker(6.9414561961921795, 122.1325018802491, "Zambowood", "Brgy. Zambowood", "Peaceful residential community");
-        addMarker(7.0000, 121.9210, "San Ramon", "Brgy. San Ramon", "Known for penal colony and coastal area");
-        addMarker(7.023358516474465, 122.18827529444269, "Manicahan", "Brgy. Manicahan", "Rural barangay with farming and coastal communities");
-        addMarker(6.953136288350877, 122.07172806121453, "Pasonanca", "Brgy. Pasonanca", "Known for its park, tree house, and natural attractions");
-        addMarker(6.941437497400123, 122.09569929559007, "Putik", "Brgy. Putik", "Residential area with schools and growing developments");
-        addMarker(6.939582380538536, 122.07943400034364, "Tumaga", "Brgy. Tumaga", "Urban barangay with mixed residential and commercial areas");
+        // Markers with precise coordinates from RoutesActivity
+        addMarker(6.9174, 122.0754, "KCC Mall de Zamboanga", "Mall", "Main center");
+        addMarker(6.9067, 122.0772, "SM Mindpro", "Mall", "City center");
+        addMarker(6.905, 122.075, "Town", "City Proper", "Downtown");
+        addMarker(6.919773, 122.153439, "Arena Blanco", "Brgy", "Coastal");
+        addMarker(6.963736, 121.948167, "Ayala", "Brgy", "Transport hub");
+        addMarker(6.915959, 122.059985, "Baliwasan", "Brgy", "Residential");
+        addMarker(6.952658, 122.118487, "Boalan", "Brgy", "Active zone");
+        addMarker(7.097772, 122.240410, "Bolong", "Brgy", "Beach area");
+        addMarker(7.107556, 122.200279, "Bunguiao", "Brgy", "Coastal");
+        addMarker(6.995350, 122.177294, "Cabaluay", "Brgy", "Fishing");
+        addMarker(6.943482, 122.057372, "Cabatangan", "Brgy", "Near airport");
+        addMarker(6.924385, 122.029809, "Calarian", "Brgy", "Golf area");
+        addMarker(6.914615, 122.073373, "Camino Nuevo", "Brgy", "Central");
+        addMarker(6.914864, 122.046055, "Campo Islam", "Brgy", "Coastal");
+        addMarker(6.916568, 122.070614, "Canelar", "Brgy", "Barter trade");
+        addMarker(6.973447, 122.146708, "Culianan", "Brgy", "Agricultural");
+        addMarker(7.210296, 122.231722, "Curuan", "Brgy", "Trading hub");
+        addMarker(6.928899, 122.092117, "Guiwan", "Brgy", "Urban");
+        addMarker(6.987401, 121.958093, "La Paz", "Brgy", "Rural");
+        addMarker(7.098295, 121.902999, "Labuan", "Brgy", "Port");
+        addMarker(7.143057, 121.902528, "Limpapa", "Brgy", "Boundary");
+        addMarker(6.970479, 122.103123, "Lumbangan", "Brgy", "Farming");
+        addMarker(6.952279, 122.090643, "Lunzuran", "Brgy", "Residential");
+        addMarker(6.965875, 121.985642, "Maasin", "Brgy", "Riverside");
+        addMarker(6.915846, 122.134478, "Mampang", "Brgy", "Salt production");
+        addMarker(6.958237, 122.148052, "Mercedes", "Brgy", "Suburb");
+        addMarker(6.977680, 122.128281, "Pasobolong", "Brgy", "Agricultural");
+        addMarker(7.052949, 121.909581, "Patalon", "Brgy", "Scenic");
+        addMarker(6.911551, 122.065191, "San Jose Cawa-Cawa", "Brgy", "Boulevard");
+        addMarker(6.908299, 122.076351, "San Jose Gusu", "Brgy", "Urban center");
+        addMarker(6.930785, 122.046341, "San Roque", "Brgy", "Residential");
+        addMarker(7.078864, 122.213814, "Sangali", "Brgy", "Port");
+        addMarker(6.903582, 122.081953, "Santa Barbara", "Brgy", "Historic");
+        addMarker(6.909226, 122.086963, "Santa Catalina", "Brgy", "Vibrant");
+        addMarker(6.931793, 122.074746, "Santa Maria", "Brgy", "Residential");
+        addMarker(7.033107, 122.039460, "Santo Niño", "Brgy", "Suburban");
+        addMarker(6.934311, 122.001067, "Sinunoc", "Brgy", "Coastal");
+        addMarker(7.023002, 121.919332, "Sinubung", "Brgy", "Transport");
+        addMarker(6.987823, 121.929789, "Talisayan", "Brgy", "Resorts");
+        addMarker(6.909755, 122.112340, "Talon-Talon", "Brgy", "Commercial");
+        addMarker(6.917908, 122.090897, "Tetuan", "Brgy", "Major");
+        addMarker(6.919832, 122.104610, "Tugbungan", "Brgy", "Residential");
+        addMarker(7.376907, 122.290041, "Vitali", "Brgy", "Northern");
+        addMarker(6.941456, 122.132502, "Zambowood", "Brgy", "Peaceful");
+        addMarker(7.000000, 121.921000, "San Ramon", "Brgy", "Coastal");
+        addMarker(7.023359, 122.188275, "Manicahan", "Brgy", "Rural");
+        addMarker(6.953136, 122.071728, "Pasonanca", "Brgy", "Park");
+        addMarker(6.941437, 122.095699, "Putik", "Brgy", "Growing");
+        addMarker(6.939582, 122.079434, "Tumaga", "Brgy", "Mixed");
     }
 
     private void addMarker(double lat, double lon, String title, String snippet, String description) {
@@ -336,13 +355,14 @@ public class MapActivity extends AppCompatActivity {
         if (myLocationOverlay != null && myLocationOverlay.getMyLocation() != null) {
             drawRoute(myLocationOverlay.getMyLocation(), destination);
         } else {
-            Toast.makeText(this, "Waiting for GPS location...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Finding your location...", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void drawRoute(GeoPoint start, GeoPoint end) {
         new Thread(() -> {
             try {
+                // Using OSRM for actual road-based routing
                 String urlString = String.format("https://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=polyline",
                         start.getLongitude(), start.getLatitude(), end.getLongitude(), end.getLatitude());
 
@@ -365,45 +385,56 @@ public class MapActivity extends AppCompatActivity {
                     JSONObject route = routes.getJSONObject(0);
                     String encodedPolyline = route.getString("geometry");
                     double distance = route.getDouble("distance") / 1000.0;
+                    double durationSeconds = route.getDouble("duration");
+                    int durationMin = (int) (durationSeconds / 60);
+
                     List<GeoPoint> routePoints = decodePolyline(encodedPolyline);
 
                     runOnUiThread(() -> {
-                        if (currentRouteLine != null) {
-                            mapView.getOverlays().remove(currentRouteLine);
-                        }
+                        clearRoute();
 
+                        // Route Polyline - Thick Blue like the image
                         currentRouteLine = new Polyline();
                         currentRouteLine.setPoints(routePoints);
-                        currentRouteLine.setColor(Color.parseColor("#3F51B5"));
-                        currentRouteLine.setWidth(12.0f);
-
+                        currentRouteLine.setColor(Color.parseColor("#1A73E8")); // Google Blue
+                        currentRouteLine.setWidth(16.0f);
                         mapView.getOverlays().add(currentRouteLine);
+
+                        // Start Marker
+                        startMarker = new Marker(mapView);
+                        startMarker.setPosition(start);
+                        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+                        startMarker.setIcon(ContextCompat.getDrawable(this, android.R.drawable.presence_online)); // Small green dot
+                        mapView.getOverlays().add(startMarker);
+
+                        // End Marker
+                        endMarker = new Marker(mapView);
+                        endMarker.setPosition(end);
+                        endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                        mapView.getOverlays().add(endMarker);
+
                         mapView.invalidate();
 
+                        // Display Time and Distance in overlay
                         cardDistanceOverlay.setVisibility(View.VISIBLE);
-                        tvOverlayDistance.setText(String.format("Distance: %.2f km", distance));
+                        tvOverlayDistance.setText(String.format("%d min • %.1f km", durationMin, distance));
+                        
+                        // Center map on route
                         mapView.getController().animateTo(end);
                     });
                 }
             } catch (Exception e) {
-                Log.e("MapActivity", "Error fetching route", e);
+                Log.e("MapActivity", "Routing error", e);
                 runOnUiThread(() -> {
-                    Toast.makeText(MapActivity.this, "Error finding road route. Drawing straight line.", Toast.LENGTH_SHORT).show();
-                    if (currentRouteLine != null) {
-                        mapView.getOverlays().remove(currentRouteLine);
-                    }
+                    Toast.makeText(MapActivity.this, "Network error. Drawing direct line.", Toast.LENGTH_SHORT).show();
+                    clearRoute();
                     currentRouteLine = new Polyline();
                     currentRouteLine.addPoint(start);
                     currentRouteLine.addPoint(end);
-                    currentRouteLine.setColor(Color.parseColor("#FF9800"));
+                    currentRouteLine.setColor(Color.parseColor("#1A73E8"));
+                    currentRouteLine.setWidth(10.0f);
                     mapView.getOverlays().add(currentRouteLine);
                     mapView.invalidate();
-                    
-                    float[] results = new float[1];
-                    Location.distanceBetween(start.getLatitude(), start.getLongitude(),
-                            end.getLatitude(), end.getLongitude(), results);
-                    tvOverlayDistance.setText(String.format("Distance: %.2f km (Direct)", results[0] / 1000));
-                    cardDistanceOverlay.setVisibility(View.VISIBLE);
                 });
             }
         }).start();
@@ -442,18 +473,20 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void showLocationPickerDialog(EditText targetEditText) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_NoTitleBar_Fullscreen);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_location_picker, null);
         builder.setView(dialogView);
 
         EditText etSearch = dialogView.findViewById(R.id.etSearchLocation);
         RecyclerView rvLocations = dialogView.findViewById(R.id.rvLocations);
+        View btnClose = dialogView.findViewById(R.id.btnClosePicker);
+
         rvLocations.setLayoutManager(new LinearLayoutManager(this));
 
-        List<String> locationNames = new ArrayList<>(locationPoints.keySet());
-        Collections.sort(locationNames);
+        List<String> combinedList = new ArrayList<>(locationPoints.keySet());
+        Collections.sort(combinedList);
 
-        LocationAdapter adapter = new LocationAdapter(locationNames, location -> {
+        LocationAdapter adapter = new LocationAdapter(combinedList, location -> {
             GeoPoint point = locationPoints.get(location);
             if (point != null) {
                 if (targetEditText == null) {
@@ -462,13 +495,21 @@ public class MapActivity extends AppCompatActivity {
                     targetEditText.setText(location);
                     updateRouteFromInputs();
                 }
+            } else {
+                if (targetEditText != null) {
+                    targetEditText.setText(location);
+                }
             }
         });
         rvLocations.setAdapter(adapter);
 
         AlertDialog dialog = builder.create();
         if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.ui_main_bg)));
+        }
+
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
         }
 
         etSearch.addTextChangedListener(new TextWatcher() {
@@ -476,14 +517,17 @@ public class MapActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.filter(s.toString());
+                adapter.updateList(
+                    combinedList.stream()
+                        .filter(l -> l.toLowerCase().contains(s.toString().toLowerCase()))
+                        .collect(Collectors.toList())
+                );
             }
             @Override
             public void afterTextChanged(Editable s) {}
         });
 
         dialog.show();
-        adapter.setDialog(dialog);
     }
 
     private void updateRouteFromInputs() {
@@ -494,7 +538,12 @@ public class MapActivity extends AppCompatActivity {
         GeoPoint endPoint = null;
 
         if (origin.equals("Current Location")) {
-            if (myLocationOverlay != null) startPoint = myLocationOverlay.getMyLocation();
+            if (myLocationOverlay != null && myLocationOverlay.getMyLocation() != null) {
+                startPoint = myLocationOverlay.getMyLocation();
+            } else {
+                Toast.makeText(this, "Obtaining GPS location...", Toast.LENGTH_SHORT).show();
+                return;
+            }
         } else {
             startPoint = locationPoints.get(origin);
         }
@@ -510,7 +559,6 @@ public class MapActivity extends AppCompatActivity {
         private final List<String> originalList;
         private List<String> filteredList;
         private final OnLocationSelectedListener listener;
-        private AlertDialog dialog;
 
         interface OnLocationSelectedListener {
             void onLocationSelected(String location);
@@ -522,33 +570,25 @@ public class MapActivity extends AppCompatActivity {
             this.listener = listener;
         }
 
-        void setDialog(AlertDialog dialog) { this.dialog = dialog; }
-
-        void filter(String query) {
-            if (query.isEmpty()) {
-                filteredList = new ArrayList<>(originalList);
-            } else {
-                filteredList = originalList.stream()
-                        .filter(s -> s.toLowerCase().contains(query.toLowerCase()))
-                        .collect(Collectors.toList());
-            }
+        void updateList(List<String> newList) {
+            this.filteredList = newList;
             notifyDataSetChanged();
         }
 
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_location_search, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             String name = filteredList.get(position);
-            holder.textView.setText(name);
+            holder.tvName.setText(name);
+            holder.tvDesc.setText("Zamboanga City");
             holder.itemView.setOnClickListener(v -> {
                 listener.onLocationSelected(name);
-                if (dialog != null) dialog.dismiss();
             });
         }
 
@@ -556,10 +596,11 @@ public class MapActivity extends AppCompatActivity {
         public int getItemCount() { return filteredList.size(); }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textView;
+            TextView tvName, tvDesc;
             ViewHolder(View view) {
                 super(view);
-                textView = view.findViewById(android.R.id.text1);
+                tvName = view.findViewById(R.id.tvLocationName);
+                tvDesc = view.findViewById(R.id.tvLocationDesc);
             }
         }
     }
